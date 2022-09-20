@@ -1,5 +1,5 @@
 #!/bin/bash
-#export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
 
 fhome=/usr/share/mixer/
 fPID=$fhome"pid.txt"
