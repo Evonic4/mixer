@@ -100,7 +100,7 @@ if [ -z "$TOKEN" ]; then
 	logger $remark" ERROR TOKEN=NULL"
 	start_login;
 	TOKEN=$(sed -n 1"p" $fhome"token.txt" | tr -d '\r')
-	sett_AirShopping;
+	pre_start_login;
 fi
 
 echo "#!/bin/bash" > $fhome$out".sh"
