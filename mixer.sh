@@ -83,6 +83,7 @@ constructor_AirShopping ()
 {
 local dgod=`date '+%Y-%m-%d'`
 local dch=`date '+%H:%M:%S'`
+local go="1"
 logger "start constructor_AirShopping"
 echo > $fhome$out".txt"
 
@@ -95,14 +96,21 @@ me1=$(echo $me | awk '{print $1}' )
 me2=$(echo $me | awk '{print $2}' )
 logger $remark" me1="$me1
 logger $remark" me2="$me2
+
 TOKEN=$(sed -n 1"p" $fhome"token.txt" | tr -d '\r')
 if [ -z "$TOKEN" ]; then
-	logger $remark" ERROR TOKEN=NULL"
-	start_login;
-	TOKEN=$(sed -n 1"p" $fhome"token.txt" | tr -d '\r')
+	logger $remark" ERROR1 TOKEN=NULL"
 	pre_start_login;
+	TOKEN=$(sed -n 1"p" $fhome"token.txt" | tr -d '\r')
+	if [ -z "$TOKEN" ]; then
+		#токена нет 2 раза
+		logger $remark" ERROR2 TOKEN=NULL"
+		go="0"
+	fi
 fi
 
+
+if [ "$go" == "1" ]; then
 echo "#!/bin/bash" > $fhome$out".sh"
 echo "export PATH=\"$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin\"" >> $fhome$out".sh"
 
@@ -159,6 +167,7 @@ echo "    </Body>" >> $fhome$out".sh"
 echo "</MixEnv:Envelope>' > "$fhome$out".txt" >> $fhome$out".sh"
 
 $fhome"setup.sh"
+fi
 }
 
 
@@ -299,6 +308,7 @@ out="2"
 remark="AirShopping"
 logger "start "$remark
 constructor_AirShopping;
+[ "$go" == "0" ] && time_total=0 && httprscode=0
 post_processing;
 [ "$Errorer" == "1" ] && AirShopping_eikr1="1"
 [ "$Errorer" == "2" ] && AirShopping_eikr2="1"
