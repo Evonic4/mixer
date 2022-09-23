@@ -23,7 +23,6 @@ TOKEN=""
 Errorer="0"
 pushg_ip=$(sed -n 13"p" $fhome"settings.conf" | tr -d '\r')
 pushg_port=$(sed -n 14"p" $fhome"settings.conf" | tr -d '\r')
-pushg_job_name=$(sed -n 15"p" $fhome"settings.conf" | tr -d '\r')
 
 AirShopping_eikr1="0"
 AirShopping_eikr2="0"	#Сервис временно недоступен
@@ -205,25 +204,25 @@ zapushgateway ()
 {
 logger $remark" start zapushgateway "
 #[ "$httprscode" -ne "200" ] && time_total=0
-echo $name"_"$remark"_time_namelookup "$(grep "time_namelookup" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_time_connect "$(grep "time_connect" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_time_appconnect "$(grep "time_appconnect" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_time_pretransfer "$(grep "time_pretransfer" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_time_redirect "$(grep "time_redirect" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_time_starttransfer "$(grep "time_starttransfer" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_time_total "$time_total | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
+echo $remark"_time_namelookup "$(grep "time_namelookup" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_time_connect "$(grep "time_connect" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_time_appconnect "$(grep "time_appconnect" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_time_pretransfer "$(grep "time_pretransfer" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_time_redirect "$(grep "time_redirect" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_time_starttransfer "$(grep "time_starttransfer" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//') | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_time_total "$time_total | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 
-echo $name"_"$remark"_httprscode "$httprscode | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
+echo $remark"_httprscode "$httprscode | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 
 #ERROR1 RQS CODE NOT 200
-echo $name"_"$remark"_eikr1 "$login_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_eikr1 "$AirShopping_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
+echo $remark"_eikr1 "$login_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_eikr1 "$AirShopping_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 #ERROR2 no RS
-echo $name"_"$remark"_eikr2 "$login_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_eikr2 "$AirShopping_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
+echo $remark"_eikr2 "$login_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_eikr2 "$AirShopping_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 #Сервис временно недоступен Service is temp unavailable
-echo $name"_"$remark"_eikr3 "$login_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
-echo $name"_"$remark"_eikr3 "$AirShopping_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$pushg_job_name
+echo $remark"_eikr3 "$login_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo $remark"_eikr3 "$AirShopping_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 }
 
 
