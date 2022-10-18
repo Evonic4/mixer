@@ -205,6 +205,13 @@ else
 #ERROR1 RQS CODE NOT 200
 logger $remark" ERROR1 RQS code="$httprscode
 Errorer="1"
+cat $fhome$out".txt"
+
+err=$(grep "DescText" $fhome$out".txt" | sed -e :a -e 's/<[^>]*>//g;/</N;//ba' | sed 's/^[ \t]*//;s/[ \t]*$//')
+if [ "$(echo $err | grep -c "invalid_token")" -gt "0" ]; then
+	Errorer="4"
+fi
+
 fi
 }
 
@@ -313,6 +320,7 @@ post_processing;
 [ "$Errorer" == "1" ] && AirShopping_eikr1="1"
 [ "$Errorer" == "2" ] && AirShopping_eikr2="1"
 [ "$Errorer" == "3" ] && AirShopping_eikr3="1"
+[ "$Errorer" == "4" ] && start_login;
 }
 
 
