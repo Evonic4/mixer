@@ -74,7 +74,7 @@ echo "</MixEnv:Envelope>' > "$fhome$out".txt" >> $fhome$out".sh"
 
 $fhome"setup.sh"
 
-echo $(date -d "$RTIME 23 hours" +%Y%m%d%H%M%S | tr -d '\r') > $fhome"token_date.txt"
+#echo $(date -d "$RTIME 23 hours" +%Y%m%d%H%M%S | tr -d '\r') > $fhome"token_date.txt"
 }
 
 
@@ -83,7 +83,7 @@ constructor_AirShopping ()
 {
 local dgod=`date '+%Y-%m-%d'`
 local dch=`date '+%H:%M:%S'`
-local go="1"
+go="1"
 logger "start constructor_AirShopping"
 echo > $fhome$out".txt"
 
@@ -100,7 +100,7 @@ logger $remark" me2="$me2
 TOKEN=$(sed -n 1"p" $fhome"token.txt" | tr -d '\r')
 if [ -z "$TOKEN" ]; then
 	logger $remark" ERROR1 TOKEN=NULL"
-	pre_start_login;
+	start_login;
 	TOKEN=$(sed -n 1"p" $fhome"token.txt" | tr -d '\r')
 	if [ -z "$TOKEN" ]; then
 		#токена нет 2 раза
@@ -179,20 +179,22 @@ err=""
 $fhome$out".sh" 1>$fhome$out".out" 2>$fhome$out"1.out"
 time_total=$(grep "time_total" $fhome$out".txt" | awk -F":" '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
 logger $remark" time_total="$time_total
-httprscode=$(grep "HTTP/2" $fhome$out".txt" | awk '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+httprscode=$(grep "HTTP/2" $fhome$out".txt" | awk '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\r')
 logger $remark" httprscode="$httprscode
+
+[ -z "$httprscode" ] && httprscode=0
 
 if [ "$httprscode" -eq "200" ]; then
 	if [ "$(grep -c "ErrorType" $fhome$out".txt")" -gt "0" ]; then
 		#ERROR2 no RS
 		logger $remark" ERROR2 no RS"
-		cat $fhome$out"1.out"
+		cat $fhome$out".out"
 		Errorer="2"
 		err=$(grep "DescText" $fhome$out".txt" | sed -e :a -e 's/<[^>]*>//g;/</N;//ba' | sed 's/^[ \t]*//;s/[ \t]*$//')
 		if [ "$(echo $err | grep -c "Сервис временно недоступен")" -gt "0" ]; then
 			Errorer="3"
-			situ1=$((situ1+1))
-			logger $remark" ERROR3 situ1="$situ1" err="$err
+			#situ1=$((situ1+1))
+			logger $remark" ERROR3 err="$err
 			else
 			logger $remark" ERROR2 err="$err
 		fi
@@ -207,12 +209,14 @@ logger $remark" ERROR1 RQS code="$httprscode
 Errorer="1"
 cat $fhome$out".txt"
 
-err=$(grep "DescText" $fhome$out".txt" | sed -e :a -e 's/<[^>]*>//g;/</N;//ba' | sed 's/^[ \t]*//;s/[ \t]*$//')
-if [ "$(echo $err | grep -c "invalid_token")" -gt "0" ]; then
+#err=$(grep "DescText" $fhome$out".txt" | sed -e :a -e 's/<[^>]*>//g;/</N;//ba' | sed 's/^[ \t]*//;s/[ \t]*$//')
+if [ "$(grep -c "invalid_token" $fhome$out".txt")" -gt "0" ]; then
 	Errorer="4"
 fi
 
 fi
+
+logger "Errorer="$Errorer
 }
 
 
@@ -242,52 +246,6 @@ echo $remark"_eikr3 "$AirShopping_eikr3 | curl --data-binary @- "http://"$pushg_
 }
 
 
-pre_start_login ()
-{
-situ1=0
-go="yes"
-while [ "$go" = "yes" ]
-do
-
-if [ "$Errorer" == "3" ]; then
-	if [ "$situ1" -lt "6" ]; then
-	start_login;
-	else
-	break;
-	fi
-else
-	go="no"
-	mdt1=$(date '+%Y%m%d%H%M%S')
-	mdt2=$(sed -n 1"p" $fhome"token_date.txt" | tr -d '\r')
-	if [ "$mdt1" \> "$mdt2" ]; then
-		start_login;
-	fi
-fi
-
-done
-}
-
-pre_start_AirShopping ()
-{
-situ1=0
-go="yes"
-start_AirShopping;
-while [ "$go" = "yes" ]
-do
-
-if [ "$Errorer" == "3" ]; then
-	if [ "$situ1" -lt "6" ]; then
-	start_AirShopping;
-	else
-	break;
-	fi
-else
-	go="no"
-fi
-
-done
-}
-
 
 start_login ()
 {
@@ -303,6 +261,15 @@ post_processing;
 [ "$Errorer" == "1" ] && login_eikr1="1"
 [ "$Errorer" == "2" ] && login_eikr2="1"
 [ "$Errorer" == "3" ] && login_eikr3="1"
+zapushgateway;
+if [ "$Errorer" != "0" ]; then
+	sleep $sec
+	start_login;
+else
+	sleep $sec
+	time_total=0
+	zapushgateway;
+fi
 }
 
 start_AirShopping ()
@@ -321,6 +288,7 @@ post_processing;
 [ "$Errorer" == "2" ] && AirShopping_eikr2="1"
 [ "$Errorer" == "3" ] && AirShopping_eikr3="1"
 [ "$Errorer" == "4" ] && start_login;
+
 }
 
 
@@ -338,20 +306,8 @@ start_login;
 while true
 do
 logger "---"
-pre_start_login;
+start_AirShopping
 zapushgateway;
-
-pre_start_AirShopping;
-if [ "$httprscode" -eq "401" ]; then
-	pre_start_login;
-	pre_start_AirShopping;
-fi
-zapushgateway;
-if [ "$Errorer" == "0" ]; then
-	remark="Login"
-	time_total=0
-	zapushgateway;
-fi
 
 sleep $sec
 done
