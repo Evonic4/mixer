@@ -27,6 +27,8 @@ pushg_port=$(sed -n 14"p" $fhome"settings.conf" | tr -d '\r')
 AirShopping_eikr1="0"
 AirShopping_eikr2="0"	#Сервис временно недоступен
 AirShopping_eikr3="0"
+
+krek=0	#количество повторов ошибки ne 200
 }
 
 
@@ -185,6 +187,7 @@ logger $remark" httprscode="$httprscode
 [ -z "$httprscode" ] && httprscode=0
 
 if [ "$httprscode" -eq "200" ]; then
+	krek=0
 	if [ "$(grep -c "ErrorType" $fhome$out".txt")" -gt "0" ]; then
 		#ERROR2 no RS
 		logger $remark" ERROR2 no RS"
@@ -213,6 +216,9 @@ cat $fhome$out".txt"
 if [ "$(grep -c "invalid_token" $fhome$out".txt")" -gt "0" ]; then
 	Errorer="4"
 fi
+
+[ "$Errorer" == "1" ] && krek=$((krek+1)
+[ "$krek" -gt "10" ] && krek=0 && Errorer="4"
 
 fi
 
@@ -250,6 +256,7 @@ echo $remark"_eikr3 "$AirShopping_eikr3 | curl --data-binary @- "http://"$pushg_
 start_login ()
 {
 Errorer="0"
+krek=0
 login_eikr1="0"
 login_eikr2="0"		#Сервис временно недоступен
 login_eikr3="0"
