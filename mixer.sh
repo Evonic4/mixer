@@ -217,7 +217,7 @@ if [ "$(grep -c "invalid_token" $fhome$out".txt")" -gt "0" ]; then
 	Errorer="4"
 fi
 
-[ "$Errorer" == "1" ] && krek=$((krek+1)
+[ "$Errorer" == "1" ] && krek=$((krek+1))
 [ "$krek" -gt "10" ] && krek=0 && Errorer="4"
 
 fi
