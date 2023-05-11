@@ -241,14 +241,14 @@ echo $remark"_time_total "$time_total | curl --data-binary @- "http://"$pushg_ip
 echo $remark"_httprscode "$httprscode | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 
 #ERROR1 RQS CODE NOT 200
-echo $remark"_eikr1 "$login_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
-echo $remark"_eikr1 "$AirShopping_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo "Login_eikr1 "$login_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo "AirShopping_eikr1 "$AirShopping_eikr1 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 #ERROR2 no RS
-echo $remark"_eikr2 "$login_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
-echo $remark"_eikr2 "$AirShopping_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo "Login_eikr2 "$login_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo "AirShopping_eikr2 "$AirShopping_eikr2 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 #Сервис временно недоступен Service is temp unavailable
-echo $remark"_eikr3 "$login_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
-echo $remark"_eikr3 "$AirShopping_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo "Login_eikr3 "$login_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
+echo "AirShopping_eikr3 "$AirShopping_eikr3 | curl --data-binary @- "http://"$pushg_ip":"$pushg_port"/metrics/job/"$name
 }
 
 
